@@ -11,11 +11,25 @@ type Queue struct {
 
 type Node struct {
 	dist []int
-	seen bool
+	seen int
 }
 
 func main() {
 	var G map[int]*Node
+	var N, M, a, b int //N:頂点数、M:辺の数
+
+	fmt.Scanf("N: %d, M: %d", &N, &M)
+	for i := 0; i < M; i++ {
+		fmt.Scanf("a: %d, b: %d", &a, &b)
+		G[a] = {dist: appen(G[a].dist,b), seen: -1}
+		G[b] = {dist: appen(G[b].dist,a), seen: -1}
+	}
+
+	BFS(&G, 0)
+
+	for k, v := range G {
+		fmt.Printf("node: %d, dist: %d", k, v.seen)
+	}
 }
 
 func BFS(G *map[int]*Node, v int) {
@@ -23,14 +37,14 @@ func BFS(G *map[int]*Node, v int) {
 
 	Q = NewQueue(10)
 
-	(*G)[v].seen = true
+	(*G)[v].seen = 0
 	Q.push(v)
 
 	for !Q.isEmpty() {
 		v = Q.pop()
 		for _, i := range (*G)[v].dist {
-			if (*G)[i].seen == false {
-				(*G)[i].seen = true
+			if (*G)[i].seen == -1 {
+				(*G)[i].seen = (*G)[v].seen + 1
 				Q.push(i)
 			}
 		}
